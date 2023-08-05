@@ -1,0 +1,20 @@
+<ion-content>
+  <div class="printers">
+    <div class="printer-list">
+      <div class="printer" *ngFor="let printer of printers">
+        <div class="name">
+          Name
+        </div>
+        <div class="last-maintenance">
+          Last maintenance
+        </div>
+        <div class="do-maintenance">
+          O
+        </div>
+      </div>
+      <div class="add-new">
+        <ion-button (click)="addNewPrinter()">Add new</ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>
