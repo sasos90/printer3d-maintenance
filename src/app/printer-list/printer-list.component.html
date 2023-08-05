@@ -13,22 +13,23 @@
     </ion-toolbar>
   </ion-header>
   <div class="printers">
-    <ion-list class="printer-list">
-      <ion-item class="printer" *ngFor="let printer of printers">
+    <div class="printer-list">
+      <div class="printer" *ngFor="let printer of printers">
         <div class="name">
           <ion-input [(ngModel)]="printer.name" (ngModelChange)="savePrinters()"></ion-input>
         </div>
         <div class="last-maintenance">
           <div class="date">{{ printer.lastMaintenance }}</div>
+          <div class="days-ago">{{ printer.timePassed }}</div>
           <ion-button (click)="doMaintenance(printer)">Do maintenance</ion-button>
         </div>
         <div class="delete" (click)="deletePrinter(printer)">
           <ion-icon name="trash"></ion-icon>
         </div>
-      </ion-item>
+      </div>
       <div class="add-new">
         <ion-button (click)="addNewPrinter()">Add new</ion-button>
       </div>
-    </ion-list>
+    </div>
   </div>
 </ion-content>

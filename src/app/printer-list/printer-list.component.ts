@@ -22,20 +22,41 @@ export class PrinterListComponent  implements OnInit {
     const savedPrinters = localStorage.getItem('printers')
     if (savedPrinters) {
       this.printers = JSON.parse(savedPrinters);
+      for (const printer of this.printers) {
+        printer.timePassed = this.getTimePassed(printer.lastMaintenance);
+      }
     }
   }
 
   addNewPrinter() {
+    const lastMaintenance = moment().format('DD.MM.YYYY HH:mm');
     this.printers.push({
       name: 'Printer name',
-      lastMaintenance: moment().format('DD.MM.YYYY HH:mm'),
+      lastMaintenance,
+      timePassed: this.getTimePassed(lastMaintenance),
     });
     this.savePrinters();
   }
 
-  doMaintenance(printer: any) {
-    printer.lastMaintenance = moment().format('DD.MM.YYYY HH:mm'),
-    this.savePrinters();
+  async doMaintenance(printer: any) {
+    const modal = await this.alertController.create({
+      header: 'Maintenance',
+      subHeader: 'Save maintenance date?',
+      buttons: [{
+        text: 'Yes',
+        role: 'yes',
+      }, {
+        text: 'No',
+        role: 'no',
+      }],
+    });
+    await modal.present();
+    const { role } = await modal.onWillDismiss();
+    if (role === 'yes') {
+      printer.lastMaintenance = moment().format('DD.MM.YYYY HH:mm');
+      printer.timePassed = this.getTimePassed(printer.lastMaintenance);
+      this.savePrinters();
+    }
   }
 
   savePrinters() {
@@ -60,5 +81,15 @@ export class PrinterListComponent  implements OnInit {
       this.printers = this.printers.filter(p => p !== printer);
       this.savePrinters();
     }
+  }
+
+  private getTimePassed(lastMaintenance: string) {
+    const lastMaintenanceMoment = moment(lastMaintenance, 'DD.MM.YYYY HH:mm');
+    const today = moment();
+    const diff = today.diff(lastMaintenanceMoment, 'days');
+    if (diff === 0) {
+      return 'Today';
+    }
+    return diff + ' days ago';
   }
 }
