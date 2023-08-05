@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {IonicModule} from "@ionic/angular";
+import {AlertController, IonicModule} from "@ionic/angular";
 import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
+import * as moment from "moment";
 
 @Component({
   selector: 'app-printer-list',
@@ -12,13 +13,52 @@ import {FormsModule} from "@angular/forms";
 })
 export class PrinterListComponent  implements OnInit {
 
-  public printers: number[] = [];
-  constructor() { }
+  public printers: any[] = [];
+  constructor(
+    private alertController: AlertController,
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    const savedPrinters = localStorage.getItem('printers')
+    if (savedPrinters) {
+      this.printers = JSON.parse(savedPrinters);
+    }
+  }
 
   addNewPrinter() {
-    console.warn("IDEMOOO");
-    this.printers.push(1);
+    this.printers.push({
+      name: 'Printer name',
+      lastMaintenance: moment().format('DD.MM.YYYY HH:mm'),
+    });
+    this.savePrinters();
+  }
+
+  doMaintenance(printer: any) {
+    printer.lastMaintenance = moment().format('DD.MM.YYYY HH:mm'),
+    this.savePrinters();
+  }
+
+  savePrinters() {
+    localStorage.setItem('printers', JSON.stringify(this.printers));
+  }
+
+  async deletePrinter(printer: any) {
+    const modal = await this.alertController.create({
+      header: 'Delete printer',
+      subHeader: 'Do you want to delete the printer?',
+      buttons: [{
+        text: 'Yes',
+        role: 'yes',
+      }, {
+        text: 'No',
+        role: 'no',
+      }],
+    });
+    await modal.present();
+    const { role } = await modal.onWillDismiss();
+    if (role === 'yes') {
+      this.printers = this.printers.filter(p => p !== printer);
+      this.savePrinters();
+    }
   }
 }
