@@ -3,6 +3,7 @@ import {AlertController, IonicModule} from "@ionic/angular";
 import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import * as moment from "moment";
+import {PrinterModel} from "../shared/models/printer.model";
 
 @Component({
   selector: 'app-printer-list',
@@ -13,7 +14,7 @@ import * as moment from "moment";
 })
 export class PrinterListComponent  implements OnInit {
 
-  public printers: any[] = [];
+  public printers: PrinterModel[] = [];
   constructor(
     private alertController: AlertController,
   ) { }
@@ -83,7 +84,7 @@ export class PrinterListComponent  implements OnInit {
     }
   }
 
-  private getTimePassed(lastMaintenance: string) {
+  private getTimePassed(lastMaintenance: string | undefined) {
     const lastMaintenanceMoment = moment(lastMaintenance, 'DD.MM.YYYY HH:mm');
     const today = moment();
     const diff = today.diff(lastMaintenanceMoment, 'days');
